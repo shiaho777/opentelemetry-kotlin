@@ -39,6 +39,14 @@ internal class BaggageImplTest {
     }
 
     @Test
+    fun `set with a comma in metadata leaves the baggage unchanged`() {
+        val original = BaggageImpl.EMPTY.set("keep", "g")
+        val updated = original.set("foo", "bar", BaggageEntryMetadataImpl("a,b"))
+        assertSame(original, updated)
+        assertNull(updated.getValue("foo"))
+    }
+
+    @Test
     fun `set with metadata preserves metadata`() {
         val meta = BaggageEntryMetadataImpl("myMeta")
         val updated = BaggageImpl.EMPTY.set("foo", "bar", meta)

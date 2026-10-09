@@ -159,6 +159,16 @@ internal class W3CBaggagePropagatorTest {
     }
 
     @Test
+    fun `inject drops an entry whose metadata contains a comma`() {
+        val baggage = createBaggage {
+            put("bad", "v", "a,b")
+            put("keep", "g")
+        }
+        val carrier = injectInto(baggage)
+        assertEquals("keep=g", carrier["baggage"])
+    }
+
+    @Test
     fun `inject skips entry with empty name`() {
         val baggage = createBaggage().set("", "v").set("ok", "g")
         val carrier = injectInto(baggage)

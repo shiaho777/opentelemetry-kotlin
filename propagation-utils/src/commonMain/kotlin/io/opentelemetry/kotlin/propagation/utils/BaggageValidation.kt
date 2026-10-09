@@ -23,6 +23,18 @@ public fun isValidBaggageKey(name: String): Boolean {
 public fun isValidBaggageValue(value: String): Boolean =
     value.all { c -> c != '\r' && c != '\n' && c.code != 0 }
 
+/**
+ * Metadata is copied into the baggage header after `;` and is not percent-encoded.
+ * A comma would be read as another list member. Other characters outside printable
+ * ASCII are not legal in that header.
+ */
+public fun isValidBaggageMetadata(metadata: String): Boolean =
+    metadata.all { c -> c.code in PRINTABLE_ASCII && c != ',' }
+
+private const val PRINTABLE_ASCII_MIN = 0x20
+private const val PRINTABLE_ASCII_MAX = 0x7E
+private val PRINTABLE_ASCII = PRINTABLE_ASCII_MIN..PRINTABLE_ASCII_MAX
+
 private fun isTChar(c: Char): Boolean {
     if (c in 'a'..'z' || c in 'A'..'Z' || c in '0'..'9') {
         return true

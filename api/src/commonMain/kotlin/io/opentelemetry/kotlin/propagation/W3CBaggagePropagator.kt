@@ -5,6 +5,7 @@ import io.opentelemetry.kotlin.baggage.Baggage
 import io.opentelemetry.kotlin.baggage.BaggageEntry
 import io.opentelemetry.kotlin.baggage.createBaggage
 import io.opentelemetry.kotlin.context.Context
+import io.opentelemetry.kotlin.propagation.utils.isValidBaggageMetadata
 import io.opentelemetry.kotlin.propagation.utils.percentDecodeBaggageValue
 import io.opentelemetry.kotlin.propagation.utils.percentEncodeBaggageValue
 
@@ -77,7 +78,7 @@ internal object W3CBaggagePropagator : TextMapPropagator {
     private fun encodeEntry(key: String, value: String, metadata: String): String {
         val sb = StringBuilder()
         sb.append(key).append(KEY_VALUE_DELIMITER).append(percentEncodeBaggageValue(value))
-        if (metadata.isNotEmpty()) {
+        if (metadata.isNotEmpty() && isValidBaggageMetadata(metadata)) {
             sb.append(METADATA_DELIMITER).append(metadata)
         }
         return sb.toString()
